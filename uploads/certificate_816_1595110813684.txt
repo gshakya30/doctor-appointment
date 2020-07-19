@@ -1,0 +1,95 @@
+In this problem, you have to modify an existing C# program that reads in some product data, and does some processing on it.
+
+A company has a number of products that they sell to customers, and each product uses one or more internal libraries. All internal libraries are given version numbers like v1, v2, v3, ... etc. which are incremented each time the internal library team releases a new version of the library to the product teams.
+
+Consider input data (on stdin) which contains information about which versions of the various libraries are being used by the current release of each product of the company:
+
+Mail Server, Authentication Library, v6
+Video Call Server, Authentication Library, v7
+Mail Server, Data Storage Library, v10
+Chat Server, Data Storage Library, v11
+Mail Server, Search Library, v6
+Chat Server, Authentication Library, v8
+Chat Server, Search Library, v7
+Video Call Server, Data Storage Library, v10
+Video Call Server, Video Compression Library, v3
+Each line of the input consists of 3 comma-separated fields. The first field is a product name, the second field is a library name, and the third field is the library version number used by that product. The example given above indicates that the Mail Server, uses version v6 of the Authentication Library, and the Video Call Server uses version v7 of the Authentication Library, and the Mail Server also uses version v10 of the Data Storage Library, and so on. For the purposes of this program, assume that all version numbers are of the form v<digits> where <digits> represents one or more decimal digits.
+
+Write a program that reads this input from stdin, figures out which is the latest version number of each library, and then prints the names of products which are using the latest version of at least one library, to standard output (console).
+
+using System;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
+public class Test
+{
+	
+	 public static int CompareVersion(string x, string y)
+    {
+        if(x == y)
+        {
+            return 0;
+        }
+        string[] x1, y1;
+        
+            x1 = Regex.Split(x, "([0-9]+)");
+      
+            y1 = Regex.Split(y, "([0-9]+)");
+            
+			int num1 = int.Parse(x1[1]);
+			int num2 = int.Parse(y1[1]);
+			if(num1 > num2) {
+				return 1;
+			} else if(num1 < num2) {
+				return -1;
+			} else {
+				return 0;
+			}
+      
+ 
+    }
+    
+    
+	public static void Main()
+	{
+		List<String> inputList = new List<String>();
+		Dictionary<String, List<String>> dmap = new Dictionary<String, List<String>>();
+	
+		while(true) {
+			String str = Console.ReadLine();
+			if(str == null)
+			break;
+			
+			inputList.Add(str);
+		}
+		
+		for(int ind=0; ind<inputList.Count;ind++) {
+			String [] inp = inputList[ind].Split(", ");
+				if(dmap.ContainsKey(inp[1])){
+					if(CompareVersion(dmap[inp[1]][1], inp[2]) == -1){
+						List<String> li = new List<String>();
+						li.Add(inp[0]);
+						li.Add(inp[2]);
+						dmap[inp[1]] = li;
+					}
+				} else {
+					List<String> li = new List<String>();
+					li.Add(inp[0]);
+					li.Add(inp[2]);
+					dmap.Add(inp[1], li);
+				}
+			
+		}
+		HashSet<String> set = new HashSet<String>();
+		foreach (KeyValuePair<String, List<String>> item in dmap)
+		{
+		    set.Add(item.Value[0]);
+		    
+		}
+
+		 foreach (String i in set)
+		    {
+		        Console.WriteLine(i);
+		    }
+		
+	}
+}
